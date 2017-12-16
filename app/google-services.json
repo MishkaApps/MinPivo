@@ -1,0 +1,66 @@
+{
+  "project_info": {
+    "project_number": "447784965522",
+    "firebase_url": "https://minpivo.firebaseio.com",
+    "project_id": "minpivo",
+    "storage_bucket": "minpivo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:447784965522:android:80bf4a5d83e1d644",
+        "android_client_info": {
+          "package_name": "mb.minpivo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "447784965522-lbbtft2fipphk02svgfrils3tcmrmb9o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mb.minpivo",
+            "certificate_hash": "2a11bd026bc2551e7da915841db5b471bd84a550"
+          }
+        },
+        {
+          "client_id": "447784965522-1oh90431lkbmkgmhqhcg2v58co1h4f1d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mb.minpivo",
+            "certificate_hash": "93e3b8257207e8d012afe81c7921eac59b773e45"
+          }
+        },
+        {
+          "client_id": "447784965522-nl4t5t5ebqc9n2ll566r4u0tpn14io7s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFmVXlK7CXav2HaO-DM-c69Nhq7Itl_Qo"
+        },
+        {
+          "current_key": "AIzaSyDDFJfdRPtmvkDppQPNtIalAt--TMW2PSg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "447784965522-nl4t5t5ebqc9n2ll566r4u0tpn14io7s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

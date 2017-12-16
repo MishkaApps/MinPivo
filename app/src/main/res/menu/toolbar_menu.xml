@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/sign_in"
+        android:title="Войти"
+        android:icon="@drawable/ic_person_outline_white_24dp"
+        app:showAsAction="always"/>
+    <item android:id="@+id/item_sirya_shit"
+        android:title="Я посрал"
+        app:showAsAction="never"/>
+    <item android:id="@+id/add_beer"
+        android:title="Добавить пиво"
+        app:showAsAction="never"/>
+    <item android:id="@+id/sign_out"
+        android:title="Выход"
+        app:showAsAction="never"/>
+</menu>

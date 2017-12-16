@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+
+    <color name="separator_color">#000000</color>
+    <color name="negative_rating">#e57373</color>
+    <color name="positive_rating">#4caf50</color>
+    <color name="neutral_rating">#FFFFFF</color>
+    <color name="toolbar_background">#212121</color>
+    <color name="new_beer_editor_background">#212121</color>
+    <color name="toolbar_text_color">#FFFFFF</color>
+    <color name="white">#FFFFFF</color>
+    <color name="titles_color">#a0000000</color>
+    <color name="transparent">#00ffffff</color>
+    <color name="beer_rated_tint">#4caf50</color>
+
+</resources>

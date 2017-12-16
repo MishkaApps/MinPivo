@@ -1,0 +1,56 @@
+<RelativeLayout android:id="@+id/lyt_add_beer"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:layout_alignParentBottom="true"
+    android:background="@color/new_beer_editor_background"
+    android:elevation="2dp"
+    android:orientation="horizontal"
+    android:visibility="gone"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditText
+        android:id="@+id/et_beer_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_toLeftOf="@+id/container_btn_add_beer"
+        android:textColor="@color/white"/>
+
+
+    <FrameLayout
+        android:id="@id/container_btn_add_beer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="20dp">
+
+        <Button
+            android:id="@+id/btn_add_beer"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:background="@drawable/ic_add_white_24dp"
+            android:gravity="center" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@id/container_btn_add_beer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="20dp">
+
+        <Button
+            android:id="@+id/btn_hide_add_beer_panel"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:background="@drawable/ic_add_white_24dp"
+            android:gravity="center" />
+    </FrameLayout>
+</RelativeLayout>

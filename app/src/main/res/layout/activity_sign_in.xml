@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="mb.minpivo.SignInActivity">
+
+    <Button
+        android:id="@+id/btn_sign_in"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Войти"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:enabled="false"
+        android:layout_marginRight="10dp"/>
+
+    <EditText
+        android:id="@+id/et_invite_code"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_margin="30dp"
+        android:inputType="numberDecimal"
+        android:layout_toLeftOf="@id/btn_sign_in"
+        android:layout_centerVertical="true"
+        android:maxLength="8"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Введите код от кореша, чтобы войти в матрицу\n(если у вас нет такого кода, то скорее всего вам здесь не рады)"
+        android:gravity="center"
+        android:layout_margin="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/et_invite_code"
+        android:textSize="20sp"/>
+
+
+
+
+</RelativeLayout>

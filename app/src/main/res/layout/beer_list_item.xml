@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mb.minpivo.Beer.BeerView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:layout_marginBottom="3dp"
+    android:layout_marginLeft="3dp"
+    android:layout_marginRight="3dp"
+    android:layout_marginTop="3dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3">
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="15dp"
+                android:gravity="center_vertical|left"
+                android:textSize="16dp" />
+
+            <ImageView
+                android:id="@+id/iv_rated_by_current_user"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:src="@drawable/ic_done_white_24dp"
+                android:tint="@color/positive_rating"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="6dp"
+                android:layout_marginTop="6dp"
+                android:visibility="invisible"/>
+
+        </RelativeLayout>
+
+        <include layout="@layout/vertical_separator" />
+
+        <TextView
+            android:id="@+id/users_rating"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+
+        <include layout="@layout/vertical_separator" />
+
+        <TextView
+            android:id="@+id/rating"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</mb.minpivo.Beer.BeerView>
