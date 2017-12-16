@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="mb.minpivo.BeerListActivity">
+    tools:context="mb.minpivo.beerlist.BeerListActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"

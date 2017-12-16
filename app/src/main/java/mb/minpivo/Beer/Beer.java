@@ -2,28 +2,46 @@ package mb.minpivo.Beer;
 
 import com.google.firebase.database.Exclude;
 
+import java.io.Serializable;
+import java.util.HashMap;
+
+import mb.minpivo.Authenticator;
+
 /**
  * Created by mbolg on 02.09.2017.
  */
 
-public class Beer {
+public class Beer implements Serializable{
     private String authorEmail;
+    private String authorId;
+    private String authorName;
     private String name;
+    private HashMap<String, Object> users;
     private int rating;
     private float averUsersRating;
     private int currentUserRating;
     private boolean isRatedByCurrentUser;
     private boolean isRatedByMe, isRatedBySomeoneElse;
 
-    public Beer(String name, String authorEmail) {
+
+    public Beer(String name) throws Authenticator.UserNotAuthed {
         this.name = name.trim();
         averUsersRating = 0;
-        this.authorEmail = authorEmail;
+        this.authorEmail = Authenticator.getCurrentUserEmail();
+        this.authorId = Authenticator.getCurrentUserId();
         isRatedByMe = false;
         isRatedBySomeoneElse = false;
     }
 
     public Beer() {
+    }
+
+    public HashMap<String, Object> getUsers() {
+        return users;
+    }
+
+    public void setUsers(HashMap<String, Object> users) {
+        this.users = users;
     }
 
     public String getName() {
@@ -95,5 +113,21 @@ public class Beer {
     @Exclude
     public void setRatedBySomeoneElse(boolean ratedBySomeoneElse) {
         isRatedBySomeoneElse = ratedBySomeoneElse;
+    }
+
+    public String getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
+    }
+
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
     }
 }

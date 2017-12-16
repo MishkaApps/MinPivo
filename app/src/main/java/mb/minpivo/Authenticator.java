@@ -49,7 +49,7 @@ public class Authenticator implements GoogleApiClient.OnConnectionFailedListener
 
     }
 
-    boolean checkIfAuthSuccessOnAuthActivityResult(int requestCode, Intent data) {
+    public boolean checkIfAuthSuccessOnAuthActivityResult(int requestCode, Intent data) {
         if (requestCode == SIGN_IN_REQUEST_CODE) {
             GoogleSignInResult signInResult = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (signInResult.isSuccess()) {

@@ -189,7 +189,7 @@ public class AddBeerPanelFragment extends Fragment {
         if (isAppWorkAvailable) {
             if (BeerNameValidator.check(name)) {
                 try {
-                    Beer newBeer = new Beer(name, Authenticator.getCurrentUserEmail());
+                    Beer newBeer = new Beer(name);
                     Database.tryAddBeer(newBeer);
                 } catch (Authenticator.UserNotAuthed userNotAuthed) {
                     userNotAuthed.printStackTrace();

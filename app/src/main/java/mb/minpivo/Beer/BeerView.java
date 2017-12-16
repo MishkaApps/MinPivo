@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -15,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import mb.minpivo.Authenticator;
+import mb.minpivo.beerinfo.BeerInfoFragment;
 import mb.minpivo.Config;
 import mb.minpivo.Database;
 import mb.minpivo.R;
@@ -29,6 +33,7 @@ public class BeerView extends CardView implements SeekBar.OnSeekBarChangeListene
     private TextView name;
     private TextView rating, usersRating;
     private ImageView ivRatedByCurrentUser;
+    private TextView tvAuthorName;
 
 
     public BeerView(Context context, AttributeSet attrs) {
@@ -41,9 +46,18 @@ public class BeerView extends CardView implements SeekBar.OnSeekBarChangeListene
         rating = findViewById(R.id.rating);
         usersRating = findViewById(R.id.users_rating);
         ivRatedByCurrentUser = findViewById(R.id.iv_rated_by_current_user);
+        tvAuthorName = findViewById(R.id.tv_author_name);
 
         name.setText(beer.getName());
         ivRatedByCurrentUser.setVisibility(beer.isRatedByCurrentUser() ? VISIBLE : INVISIBLE);
+        tvAuthorName.setText(beer.getAuthorName());
+
+//        name.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                showBeerInfo();
+//            }
+//        });
 
         if (beer.isRatedByMe())
             rating.setText(Integer.toString(beer.getRating()));
@@ -63,6 +77,15 @@ public class BeerView extends CardView implements SeekBar.OnSeekBarChangeListene
 
         rating.setOnClickListener(this);
         usersRating.setOnClickListener(this);
+    }
+
+    private void showBeerInfo() {
+        FragmentManager manager = ((AppCompatActivity)getContext()).getSupportFragmentManager();
+        BeerInfoFragment beerInfoFragment = new BeerInfoFragment();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("beer", beer);
+        beerInfoFragment.setArguments(bundle);
+        beerInfoFragment.show(manager, "beer_info");
     }
 
 
@@ -96,7 +119,7 @@ public class BeerView extends CardView implements SeekBar.OnSeekBarChangeListene
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
         LayoutInflater layoutInflater = LayoutInflater.from(getContext());
         View dialogView = layoutInflater.inflate(R.layout.beer_rating_picker, null);
-        SeekBar ratingPicker = (SeekBar) dialogView.findViewById(R.id.rating_picker);
+        SeekBar ratingPicker = dialogView.findViewById(R.id.rating_picker);
         ratingPicker.setProgress(pickerRating + 10);
         ratingPicker.setOnSeekBarChangeListener(this);
         dialogBuilder.setView(dialogView);
@@ -116,7 +139,7 @@ public class BeerView extends CardView implements SeekBar.OnSeekBarChangeListene
             }
         });
         ((TextView) dialogView.findViewById(R.id.message)).setText("Ваша оценка пива " + beer.getName());
-        tvBeerRatingInDialog = (TextView) dialogView.findViewById(R.id.rating);
+        tvBeerRatingInDialog = dialogView.findViewById(R.id.rating);
         tvBeerRatingInDialog.setText(Integer.toString(pickerRating));
         dialogBuilder.create().show();
     }

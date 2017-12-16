@@ -12,6 +12,8 @@ import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import mb.minpivo.beerlist.BeerListActivity;
+
 public class SignInActivity extends AppCompatActivity implements TextWatcher {
     private EditText etCode;
     private Button btnSignIn;

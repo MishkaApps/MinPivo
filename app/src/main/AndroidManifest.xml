@@ -9,7 +9,7 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/MyStyle">
-        <activity android:name=".BeerListActivity"/>
+        <activity android:name=".beerlist.BeerListActivity"/>
         <activity android:name=".SignInActivity"/>
         <activity android:name=".CodeActivity"
             android:noHistory="true">

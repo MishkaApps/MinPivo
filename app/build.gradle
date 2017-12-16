@@ -14,7 +14,7 @@ android {
         applicationId "mb.minpivo"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 8
+        versionCode 9
         versionName "2.2.8"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }

@@ -23,7 +23,7 @@ public class BeerListAdapter extends RecyclerView.Adapter<BeerListAdapter.ViewHo
 
     public BeerListAdapter() {
         beers = new ArrayList<>();
-        DatabaseReference reference = Database.getBeersReference();
+        DatabaseReference reference = Database.getBeersRef();
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

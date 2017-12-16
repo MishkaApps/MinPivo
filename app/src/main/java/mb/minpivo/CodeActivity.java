@@ -19,6 +19,8 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import mb.minpivo.beerlist.BeerListActivity;
+
 public class CodeActivity extends AppCompatActivity implements View.OnFocusChangeListener, EnterCapabilityListener {
     private EditText etDummy;
     private ArrayList<DigitInput> etDigits;
@@ -42,7 +44,7 @@ public class CodeActivity extends AppCompatActivity implements View.OnFocusChang
 
         showWaitingAndHideCode();
 
-        Database.setEnterAwailableValue(this);
+        Database.setEnterAvailableValue(this);
 
         etDummy = (EditText) findViewById(R.id.et_dummy);
 
