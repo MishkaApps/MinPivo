@@ -11,7 +11,7 @@ import mb.minpivo.Authenticator;
  * Created by mbolg on 02.09.2017.
  */
 
-public class Beer implements Serializable{
+public class BeerOld implements Serializable{
     private String authorEmail;
     private String authorId;
     private String authorName;
@@ -24,7 +24,7 @@ public class Beer implements Serializable{
     private boolean isRatedByMe, isRatedBySomeoneElse;
 
 
-    public Beer(String name) throws Authenticator.UserNotAuthed {
+    public BeerOld(String name) throws Authenticator.UserNotAuthedException {
         this.name = name.trim();
         averUsersRating = 0;
         this.authorEmail = Authenticator.getCurrentUserEmail();
@@ -33,7 +33,7 @@ public class Beer implements Serializable{
         isRatedBySomeoneElse = false;
     }
 
-    public Beer() {
+    public BeerOld() {
     }
 
     public HashMap<String, Object> getUsers() {

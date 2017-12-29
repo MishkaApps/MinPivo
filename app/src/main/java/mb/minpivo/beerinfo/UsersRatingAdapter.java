@@ -10,24 +10,23 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import mb.minpivo.Database;
-import mb.minpivo.L;
 import mb.minpivo.R;
+import mb.minpivo.database.beers.Beer;
+import mb.minpivo.database.users.UsersDatabase;
 
 /**
  * Created by mbolg on 16.12.2017.
  */
 
 public class UsersRatingAdapter extends RecyclerView.Adapter<UsersRatingAdapter.Item> {
-    private ArrayList<Pair<String, Long>> rating;
+    private ArrayList<Pair<String, Integer>> usersRating;
 
-    public UsersRatingAdapter(HashMap<String, Object> data) throws NoNamedUsersException{
-        rating = new ArrayList<>();
-        for (String id : data.keySet()) {
-            if(!Database.isUserNameSetForUser(id))
+    public UsersRatingAdapter(Beer beer) {
+        usersRating = new ArrayList<>();
+        for (String id : beer.getUsers().keySet()) {
+            if (UsersDatabase.getInstance().getUserNameById(id) == null)
                 continue;
-            Pair<String, Long> p = new Pair(id, data.get(id));
-            rating.add(p);
+            usersRating.add(new Pair<>(id, beer.getUsers().get(id)));
         }
     }
 
@@ -38,14 +37,14 @@ public class UsersRatingAdapter extends RecyclerView.Adapter<UsersRatingAdapter.
 
     @Override
     public void onBindViewHolder(Item holder, int position) {
-        holder.setName(Database.getUserNameById(rating.get(position).first));
-        holder.setRating(Long.toString(rating.get(position).second));
-//        holder.setRating(rating.get(position).second.toString());
+        String userId = usersRating.get(position).first;
+        holder.setName(UsersDatabase.getInstance().getUserNameById(userId));
+        holder.setRating(Integer.toString(usersRating.get(position).second));
     }
 
     @Override
     public int getItemCount() {
-        return rating.size();
+        return usersRating.size();
     }
 
     class Item extends RecyclerView.ViewHolder {
@@ -61,6 +60,7 @@ public class UsersRatingAdapter extends RecyclerView.Adapter<UsersRatingAdapter.
         public void setName(String name) {
             tvName.setText(name);
         }
+
         public void setRating(String rating) {
             tvRating.setText(rating);
         }

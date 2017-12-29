@@ -1,49 +1,23 @@
 package mb.minpivo;
 
-import android.support.v4.util.Pair;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import mb.minpivo.database.beers.Beer;
 
-import mb.minpivo.Beer.Beer;
 
 /**
  * Created by mbolg on 18.10.2017.
  */
 
 public class Database {
-    private static HashMap<String, UserData> usersData;
-
-    public static void setUserDataChangeListener(){
-        usersData = new HashMap<>();
-        getEmailsRef().addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot userDataSnapshot: dataSnapshot.getChildren()){
-                    UserData userData =  userDataSnapshot.getValue(UserData.class);
-                    usersData.put(userDataSnapshot.getKey(), userData);
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-
     public static void tryAddBeer(final Beer beer) {
         getBeersRef().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -72,20 +46,16 @@ public class Database {
         beersReference.child(beer.getName()).setValue(beer);
     }
 
-    public static void setRatingToBeer(Beer beer, int rating) {
-        if (Authenticator.isIAuthed()) {
-            getBeersRef().child(beer.getName()).child("rating").setValue(rating);
+    public static void setRatingToBeer(mb.minpivo.database.beers.Beer beer, int rating) {
+        if (Authenticator.isSomeoneAuthed())
             setCurrentUserRatingToBeer(beer, rating);
-        } else if (Authenticator.isSomeoneExceptMeAuthed()) {
-            setCurrentUserRatingToBeer(beer, rating);
-        }
     }
 
-    public static void setCurrentUserRatingToBeer(Beer beer, int userRating) {
+    public static void setCurrentUserRatingToBeer(mb.minpivo.database.beers.Beer beer, int userRating) {
         FirebaseUser currentUser;
         try {
             currentUser = Authenticator.getCurrentUser();
-        } catch (Authenticator.UserNotAuthed e) {
+        } catch (Authenticator.UserNotAuthedException e) {
             return;
         }
         DatabaseReference beersReference = getBeersRef();
@@ -142,7 +112,7 @@ public class Database {
                         .child(Authenticator.getCurrentUserId())
                         .child("email")
                         .setValue(Authenticator.getCurrentUserEmail());
-            } catch (Authenticator.UserNotAuthed userNotAuthed) {
+            } catch (Authenticator.UserNotAuthedException userNotAuthed) {
             }
     }
 
@@ -150,7 +120,7 @@ public class Database {
         FirebaseDatabase.getInstance().getReference().child("sirya_shits").push().setValue(true);
     }
 
-    public static void setEnterAvailableValue(final EnterCapabilityListener listener) {
+    public static void setWorkAvailabilityListener(final EnterCapabilityListener listener) {
         FirebaseDatabase.getInstance().getReference().child("is_enter_available").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -183,18 +153,25 @@ public class Database {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String userName;
-                for (DataSnapshot user : dataSnapshot.getChildren()) {
-                    userName = (String) user.child("name").getValue();
-                    if (userName != null)
-                        if (name.toLowerCase().equals(userName.toLowerCase()))
-                            return;
-                }
+                try {
+                    for (DataSnapshot user : dataSnapshot.getChildren()) {
+                        userName = (String) user.child("name").getValue();
+                        if (userName != null)
+                            if (name.toLowerCase().equals(userName.toLowerCase()))
+                                if (user.getKey().equals(Authenticator.getCurrentUserId()))
+                                    break;
+                                else
+                                    return;
 
+                    }
+                } catch (Authenticator.UserNotAuthedException userNotAuthed) {
+                    userNotAuthed.printStackTrace();
+                    return;
+                }
                 try {
                     DatabaseReference reference = getEmailsRef();
                     reference.child(Authenticator.getCurrentUserId()).child("name").setValue(name);
-                    updateAuthorNameForBeers(name);
-                } catch (Authenticator.UserNotAuthed userNotAuthed) {
+                } catch (Authenticator.UserNotAuthedException userNotAuthed) {
                     userNotAuthed.printStackTrace();
                 }
             }
@@ -214,7 +191,7 @@ public class Database {
                     for (DataSnapshot beer : dataSnapshot.getChildren())
                         if ((beer.child("authorId").getValue().equals(Authenticator.getCurrentUserId())))
                             beer.child("authorName").getRef().setValue(name);
-                } catch (Authenticator.UserNotAuthed userNotAuthed) {
+                } catch (Authenticator.UserNotAuthedException userNotAuthed) {
                     userNotAuthed.printStackTrace();
                 }
             }
@@ -230,11 +207,12 @@ public class Database {
         return FirebaseDatabase.getInstance().getReference().child("emails");
     }
 
-    public static boolean isUserNameSetForUser(String id) {
-        return usersData.get(id).getName() != null;
+
+    private static DatabaseReference getBeerRef(String name) {
+        return FirebaseDatabase.getInstance().getReference("beers/" + name);
     }
 
-    public static String getUserNameById(String id) {
-        return usersData.get(id).getName();
+    public static void setListeners() {
+
     }
 }

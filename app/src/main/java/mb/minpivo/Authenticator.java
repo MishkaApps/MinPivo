@@ -76,22 +76,22 @@ public class Authenticator implements GoogleApiClient.OnConnectionFailedListener
     public static boolean isIAuthed() {
         try {
             return getCurrentUser().getEmail().equals(Config.MY_EMAIL);
-        } catch (UserNotAuthed userNotAuthed) {
+        } catch (UserNotAuthedException userNotAuthed) {
             return false;
         }
     }
 
-    public static FirebaseUser getCurrentUser() throws UserNotAuthed {
+    public static FirebaseUser getCurrentUser() throws UserNotAuthedException {
         if (FirebaseAuth.getInstance().getCurrentUser() == null)
-            throw new UserNotAuthed();
+            throw new UserNotAuthedException();
         return FirebaseAuth.getInstance().getCurrentUser();
     }
 
-    public static String getCurrentUserEmail() throws UserNotAuthed {
+    public static String getCurrentUserEmail() throws UserNotAuthedException {
         return getCurrentUser().getEmail();
     }
 
-    public static String getCurrentUserId() throws UserNotAuthed {
+    public static String getCurrentUserId() throws UserNotAuthedException {
         return getCurrentUser().getUid();
     }
 
@@ -103,7 +103,7 @@ public class Authenticator implements GoogleApiClient.OnConnectionFailedListener
     public static boolean isSiryaAuthed() {
         try {
             return getCurrentUserEmail().equals(Config.SIRYA_EMAIL);
-        } catch (UserNotAuthed userNotAuthed) {
+        } catch (UserNotAuthedException userNotAuthed) {
             return false;
         }
     }
@@ -117,6 +117,6 @@ public class Authenticator implements GoogleApiClient.OnConnectionFailedListener
         return isSomeoneAuthed() && !isIAuthed();
     }
 
-    public static class UserNotAuthed extends Exception {
+    public static class UserNotAuthedException extends Exception {
     }
 }

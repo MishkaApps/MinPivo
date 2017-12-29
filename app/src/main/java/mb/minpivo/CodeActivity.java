@@ -2,6 +2,8 @@ package mb.minpivo;
 
 import android.animation.Animator;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -16,6 +18,11 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -38,48 +45,45 @@ public class CodeActivity extends AppCompatActivity implements View.OnFocusChang
             return;
         }
 
-        lytCode = (ViewGroup)findViewById(R.id.lyt_code);
-        lytWaitingIcon = (ViewGroup)findViewById(R.id.lyt_waiting_icon);
-        imgvWaiting = (ImageView) findViewById(R.id.imgv_waiting_icon);
+        lytCode = findViewById(R.id.lyt_code);
+        lytWaitingIcon = findViewById(R.id.lyt_waiting_icon);
+        imgvWaiting = findViewById(R.id.imgv_waiting_icon);
 
         showWaitingAndHideCode();
 
-        Database.setEnterAvailableValue(this);
+        Database.setWorkAvailabilityListener(this);
 
-        etDummy = (EditText) findViewById(R.id.et_dummy);
+        etDummy = findViewById(R.id.et_dummy);
 
         etDigits = new ArrayList<>(4);
 
-        etDigits.add((DigitInput) findViewById(R.id.et_digit_1));
-        etDigits.add((DigitInput) findViewById(R.id.et_digit_2));
-        etDigits.add((DigitInput) findViewById(R.id.et_digit_3));
-        etDigits.add((DigitInput) findViewById(R.id.et_digit_4));
+        etDigits.add(findViewById(R.id.et_digit_1));
+        etDigits.add(findViewById(R.id.et_digit_2));
+        etDigits.add(findViewById(R.id.et_digit_3));
+        etDigits.add(findViewById(R.id.et_digit_4));
 
         for (EditText et : etDigits) {
             final int currentIndex = getIndexOfDigitEt(et);
 
-            et.setOnKeyListener(new View.OnKeyListener() {
-                @Override
-                public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                    int keyCode = keyEvent.getKeyCode();
-                    if (keyCode == KeyEvent.KEYCODE_DEL) {
-                        if (currentIndex != 0)
-                            if (isFocusedEtEmpty())
-                                requestFocusForEtByIndex(currentIndex - 1);
-                    } else if (keyCode == KeyEvent.KEYCODE_0
-                            || keyCode == KeyEvent.KEYCODE_1
-                            || keyCode == KeyEvent.KEYCODE_2
-                            || keyCode == KeyEvent.KEYCODE_3
-                            || keyCode == KeyEvent.KEYCODE_4
-                            || keyCode == KeyEvent.KEYCODE_5
-                            || keyCode == KeyEvent.KEYCODE_6
-                            || keyCode == KeyEvent.KEYCODE_7
-                            || keyCode == KeyEvent.KEYCODE_8) {
-                        if (!isFocusedEtEmpty())
-                            getCurrentFocusedEt().setText("");
-                    }
-                    return false;
+            et.setOnKeyListener((view, i, keyEvent) -> {
+                int keyCode = keyEvent.getKeyCode();
+                if (keyCode == KeyEvent.KEYCODE_DEL) {
+                    if (currentIndex != 0)
+                        if (isFocusedEtEmpty())
+                            requestFocusForEtByIndex(currentIndex - 1);
+                } else if (keyCode == KeyEvent.KEYCODE_0
+                        || keyCode == KeyEvent.KEYCODE_1
+                        || keyCode == KeyEvent.KEYCODE_2
+                        || keyCode == KeyEvent.KEYCODE_3
+                        || keyCode == KeyEvent.KEYCODE_4
+                        || keyCode == KeyEvent.KEYCODE_5
+                        || keyCode == KeyEvent.KEYCODE_6
+                        || keyCode == KeyEvent.KEYCODE_7
+                        || keyCode == KeyEvent.KEYCODE_8) {
+                    if (!isFocusedEtEmpty())
+                        getCurrentFocusedEt().setText("");
                 }
+                return false;
             });
 
             et.addTextChangedListener(new TextWatcher() {

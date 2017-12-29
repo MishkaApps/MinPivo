@@ -1,6 +1,8 @@
 package mb.minpivo;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,6 +24,7 @@ public class SignInActivity extends AppCompatActivity implements TextWatcher {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         if (Authenticator.isSomeoneAuthed()) {
             goToBeerListActivity();
@@ -49,6 +52,7 @@ public class SignInActivity extends AppCompatActivity implements TextWatcher {
             }
         });
     }
+
 
     private void goToBeerListActivity() {
         Intent intent = new Intent(this, BeerListActivity.class);

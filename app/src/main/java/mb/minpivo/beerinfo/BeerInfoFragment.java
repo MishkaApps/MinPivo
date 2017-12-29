@@ -16,9 +16,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import mb.minpivo.Beer.Beer;
 import mb.minpivo.BeerRatingPickerDialog;
 import mb.minpivo.R;
+import mb.minpivo.database.beers.Beer;
 
 /**
  * Created by mbolg on 16.12.2017.
@@ -26,6 +26,7 @@ import mb.minpivo.R;
 
 public class BeerInfoFragment extends DialogFragment {
     private TextView tvBeerName;
+    private TextView tvAuthorName;
     private RecyclerView rvUsersRating;
 
     @NonNull
@@ -36,18 +37,17 @@ public class BeerInfoFragment extends DialogFragment {
         View layout = inflater.inflate(R.layout.beer_info, null);
         builder.setView(layout);
         tvBeerName = layout.findViewById(R.id.tv_beer_name);
+        tvAuthorName = layout.findViewById(R.id.tv_author_name);
         rvUsersRating = layout.findViewById(R.id.rv_rating_list);
         Beer beer = (Beer) getArguments().getSerializable("beer");
 
+        tvBeerName.setText(beer.getName());
+        if (beer.getAuthorName() != null)
+            tvAuthorName.setText("Добавил " + beer.getAuthorName());
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         rvUsersRating.setLayoutManager(layoutManager);
-        try {
-            rvUsersRating.setAdapter(new UsersRatingAdapter(beer.getUsers()));
-        } catch (NoNamedUsersException e) {
-            e.printStackTrace();
-        }
-
+        rvUsersRating.setAdapter(new UsersRatingAdapter(beer));
 
         return builder.create();
     }

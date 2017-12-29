@@ -1,7 +1,6 @@
 package mb.minpivo.Beer;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -11,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -18,18 +18,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import mb.minpivo.Authenticator;
-import mb.minpivo.beerinfo.BeerInfoFragment;
 import mb.minpivo.Config;
 import mb.minpivo.Database;
+import mb.minpivo.L;
 import mb.minpivo.R;
 import mb.minpivo.WorkAvailabilityProvider;
+import mb.minpivo.beerinfo.BeerInfoFragment;
+import mb.minpivo.database.DatasetChangedListener;
+import mb.minpivo.database.users.UsersDatabase;
 
 /**
  * Created by mbolg on 02.09.2017.
  */
 
-public class BeerView extends CardView implements SeekBar.OnSeekBarChangeListener, View.OnClickListener {
-    private Beer beer;
+public class BeerView extends CardView implements SeekBar.OnSeekBarChangeListener, View.OnClickListener, DatasetChangedListener {
+    private mb.minpivo.database.beers.Beer beer;
     private TextView name;
     private TextView rating, usersRating;
     private ImageView ivRatedByCurrentUser;
@@ -40,7 +43,7 @@ public class BeerView extends CardView implements SeekBar.OnSeekBarChangeListene
         super(context, attrs);
     }
 
-    public void initialize(Beer beer) {
+    public void initialize(mb.minpivo.database.beers.Beer beer) {
         this.beer = beer;
         name = findViewById(R.id.name);
         rating = findViewById(R.id.rating);
@@ -52,15 +55,8 @@ public class BeerView extends CardView implements SeekBar.OnSeekBarChangeListene
         ivRatedByCurrentUser.setVisibility(beer.isRatedByCurrentUser() ? VISIBLE : INVISIBLE);
         tvAuthorName.setText(beer.getAuthorName());
 
-//        name.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                showBeerInfo();
-//            }
-//        });
-
         if (beer.isRatedByMe())
-            rating.setText(Integer.toString(beer.getRating()));
+            rating.setText(Integer.toString(beer.getMyRating()));
         else rating.setText(" ");
 
         if (beer.isRatedBySomeoneElse())
@@ -71,16 +67,26 @@ public class BeerView extends CardView implements SeekBar.OnSeekBarChangeListene
         paintUsersRatingView();
 
         if (Authenticator.isIAuthed())
-            pickerRating = beer.getRating();
+            pickerRating = beer.getMyRating();
         else if (Authenticator.isSomeoneExceptMeAuthed())
             pickerRating = beer.getCurrentUserRating();
 
         rating.setOnClickListener(this);
         usersRating.setOnClickListener(this);
+        UsersDatabase.getInstance().addDatasetChangedListener(this);
     }
 
-    private void showBeerInfo() {
-        FragmentManager manager = ((AppCompatActivity)getContext()).getSupportFragmentManager();
+    private boolean isNecessaryToShowBeerInfo() {
+        for (String id : beer.getUsers().keySet())
+            if (UsersDatabase.getInstance().getUserNameById(id) != null)
+                return true;
+
+        return false;
+    }
+
+    private void showBeerInfoFragment() {
+        isNecessaryToShowBeerInfo();
+        FragmentManager manager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
         BeerInfoFragment beerInfoFragment = new BeerInfoFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable("beer", beer);
@@ -90,7 +96,7 @@ public class BeerView extends CardView implements SeekBar.OnSeekBarChangeListene
 
 
     private void paintMyRatingView() {
-        rating.setBackground(getBackgroundAccordinglyRating(beer.getRating()));
+        rating.setBackground(getBackgroundAccordinglyRating(beer.getMyRating()));
     }
 
     private void paintUsersRatingView() {
@@ -123,20 +129,17 @@ public class BeerView extends CardView implements SeekBar.OnSeekBarChangeListene
         ratingPicker.setProgress(pickerRating + 10);
         ratingPicker.setOnSeekBarChangeListener(this);
         dialogBuilder.setView(dialogView);
-        dialogBuilder.setPositiveButton("Ок", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                try {
-                    if (Authenticator.getCurrentUserEmail().equals(Config.SONYA_EMAIL))
-                        if (pickerRating == 10 || pickerRating == -10) {
-                            Toast.makeText(getContext(), "Cоня, иди нахуй (от Папы)", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                } catch (Authenticator.UserNotAuthed userNotAuthed) {
-                    userNotAuthed.printStackTrace();
-                }
-                Database.setRatingToBeer(beer, pickerRating);
+        dialogBuilder.setPositiveButton("Ок", (dialogInterface, i) -> {
+            try {
+                if (Authenticator.getCurrentUserEmail().equals(Config.SONYA_EMAIL))
+                    if (pickerRating == 10 || pickerRating == -10) {
+                        Toast.makeText(getContext(), "Cоня, иди нахуй (от Папы)", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+            } catch (Authenticator.UserNotAuthedException userNotAuthed) {
+                userNotAuthed.printStackTrace();
             }
+            Database.setRatingToBeer(beer, pickerRating);
         });
         ((TextView) dialogView.findViewById(R.id.message)).setText("Ваша оценка пива " + beer.getName());
         tvBeerRatingInDialog = dialogView.findViewById(R.id.rating);
@@ -174,5 +177,12 @@ public class BeerView extends CardView implements SeekBar.OnSeekBarChangeListene
                     createRatingPickerDialog();
                 break;
         }
+    }
+
+    @Override
+    public void notifyDataChanged() {
+        if (isNecessaryToShowBeerInfo())
+            name.setOnClickListener(view -> showBeerInfoFragment());
+        else name.setOnClickListener(null);
     }
 }

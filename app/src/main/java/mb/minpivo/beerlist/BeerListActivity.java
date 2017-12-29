@@ -2,6 +2,8 @@ package mb.minpivo.beerlist;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +22,10 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import mb.minpivo.AddBeerPanelFragment;
@@ -29,8 +35,11 @@ import mb.minpivo.Config;
 import mb.minpivo.Database;
 import mb.minpivo.EnterCapabilityListener;
 import mb.minpivo.InvalidUserNameException;
+import mb.minpivo.L;
 import mb.minpivo.R;
 import mb.minpivo.WorkAvailabilityProvider;
+import mb.minpivo.database.beers.BeersDatabase;
+import mb.minpivo.database.users.UsersDatabase;
 
 public class BeerListActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, EnterCapabilityListener, WorkAvailabilityProvider {
     private Authenticator authenticator;
@@ -42,11 +51,15 @@ public class BeerListActivity extends AppCompatActivity implements GoogleApiClie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_beer_list);
 
+        exitIfAppObsolete();
+
+
         initUI();
         authenticator = new Authenticator(this);
         isWorkAvailable = false;
-        Database.setEnterAvailableValue(this);
-//        Database.setUserDataChangeListener();
+        Database.setWorkAvailabilityListener(this);
+        UsersDatabase.getInstance();
+        BeersDatabase.getInstance();
 
         addBeerPanel = (AddBeerPanelFragment) getSupportFragmentManager().findFragmentById(R.id.add_beer_panel_fragment);
 
@@ -62,6 +75,32 @@ public class BeerListActivity extends AppCompatActivity implements GoogleApiClie
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 Database.addCurrentUserEmailIfAuthed();
                 subscribeToTopicsIfAuthed();
+            }
+        });
+    }
+
+
+    private void exitIfAppObsolete() {
+        FirebaseDatabase.getInstance().getReference("min_app_version").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                try {
+                    int minVersion = dataSnapshot.getValue(Integer.class);
+                    PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+                    int currentAppVersion = packageInfo.versionCode;
+
+                    if(currentAppVersion < minVersion){
+                        Toast.makeText(BeerListActivity.this, "Обновите приложение, не будьте чмошником", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
     }
@@ -195,12 +234,12 @@ public class BeerListActivity extends AppCompatActivity implements GoogleApiClie
     @Override
     public void setCapability(boolean b) {
         isWorkAvailable = b;
+        L.l("work available: " + b);
     }
 
     @Override
     public boolean isWorkAvailable() {
         return isWorkAvailable;
-
     }
 }
 

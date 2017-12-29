@@ -11,67 +11,66 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-import mb.minpivo.Beer.Beer;
 import mb.minpivo.Beer.BeerView;
+import mb.minpivo.database.DatasetChangedListener;
+import mb.minpivo.database.beers.Beer;
+import mb.minpivo.database.beers.BeersDatabase;
 
-/**
- * Created by mbolg on 02.09.2017.
- */
-
-public class BeerListAdapter extends RecyclerView.Adapter<BeerListAdapter.ViewHolder> {
+public class BeerListAdapter extends RecyclerView.Adapter<BeerListAdapter.ViewHolder> implements DatasetChangedListener {
     private ArrayList<Beer> beers;
 
     public BeerListAdapter() {
         beers = new ArrayList<>();
-        DatabaseReference reference = Database.getBeersRef();
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                beers = new ArrayList<>();
-                Beer tempBeer;
-                int usersRating;
-                int usersCount;
-                String currentUserId = null;
-                try {
-                    currentUserId = Authenticator.getCurrentUserId();
-                } catch (Authenticator.UserNotAuthed userNotAuthed) {
-                    userNotAuthed.printStackTrace();
-                }
-                for (DataSnapshot item : dataSnapshot.getChildren()) {
-                    tempBeer = item.getValue(Beer.class);
-                    usersRating = 0;
-                    usersCount = 0;
-                    for (DataSnapshot user : item.child("users").getChildren()) {
+        BeersDatabase.getInstance().addDatasetChangedListener(this);
 
-                        if (user.getKey().equals(currentUserId))
-                            tempBeer.setRatedByCurrentUser(true);
-
-                        if (user.getKey().equals(Config.MY_ID)) {
-                            tempBeer.setRatedByMe(true);
-                            continue;
-                        } else {
-                            tempBeer.setRatedBySomeoneElse(true);
-                        }
-                        ++usersCount;
-                        usersRating += (long) user.getValue();
-                        if (currentUserId != null)
-                            if (currentUserId.equals(user.getKey()))
-                                tempBeer.setCurrentUserRating(Math.round((long) user.getValue()));
-                    }
-
-                    if (usersCount > 0)
-                        tempBeer.setAverUsersRating(usersRating / usersCount);
-
-                    beers.add(tempBeer);
-                }
-                notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+//        reference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                beers = new ArrayList<>();
+//                Beer tempBeer;
+//                int usersRating;
+//                int usersCount;
+//                String currentUserId = null;
+//                try {
+//                    currentUserId = Authenticator.getCurrentUserId();
+//                } catch (Authenticator.UserNotAuthedException userNotAuthed) {
+//                    userNotAuthed.printStackTrace();
+//                }
+//                for (DataSnapshot item : dataSnapshot.getChildren()) {
+//                    tempBeer = item.getValue(Beer.class);
+//                    usersRating = 0;
+//                    usersCount = 0;
+//                    for (DataSnapshot user : item.child("users").getChildren()) {
+//
+//                        if (user.getKey().equals(currentUserId))
+//                            tempBeer.setRatedByCurrentUser(true);
+//
+//                        if (user.getKey().equals(Config.MY_ID)) {
+//                            tempBeer.setRatedByMe(true);
+//                            continue;
+//                        } else {
+//                            tempBeer.setRatedBySomeoneElse(true);
+//                        }
+//                        ++usersCount;
+//                        usersRating += (long) user.getValue();
+//                        if (currentUserId != null)
+//                            if (currentUserId.equals(user.getKey()))
+//                                tempBeer.setCurrentUserRating(Math.round((long) user.getValue()));
+//                    }
+//
+//                    if (usersCount > 0)
+//                        tempBeer.setAverUsersRating(usersRating / usersCount);
+//
+//                    beers.add(tempBeer);
+//                }
+//                notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
     }
 
     @Override
@@ -88,6 +87,12 @@ public class BeerListAdapter extends RecyclerView.Adapter<BeerListAdapter.ViewHo
     @Override
     public int getItemCount() {
         return beers.size();
+    }
+
+    @Override
+    public void notifyDataChanged() {
+        beers = (ArrayList<Beer>) BeersDatabase.getInstance().getItemsAsList();
+        super.notifyDataSetChanged();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

@@ -15,7 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import mb.minpivo.Beer.Beer;
+import mb.minpivo.database.beers.Beer;
 
 
 /**
@@ -188,12 +188,13 @@ public class AddBeerPanelFragment extends Fragment {
 
         if (isAppWorkAvailable) {
             if (BeerNameValidator.check(name)) {
+                Beer newBeer = null;
                 try {
-                    Beer newBeer = new Beer(name);
-                    Database.tryAddBeer(newBeer);
-                } catch (Authenticator.UserNotAuthed userNotAuthed) {
-                    userNotAuthed.printStackTrace();
+                    newBeer = new Beer(name);
+                } catch (Authenticator.UserNotAuthedException e) {
+                    return;
                 }
+                Database.tryAddBeer(newBeer);
             } else {
                 Toast.makeText(getActivity(), "Необходимо менее ущербное имя", Toast.LENGTH_SHORT).show();
             }
